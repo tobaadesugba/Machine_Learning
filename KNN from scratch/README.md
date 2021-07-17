@@ -3,7 +3,7 @@
 KNN is a custom made Python library for dealing with K nearest neighbours algorithm for calculation.
 KNN says show me your neighbour and I''ll tell you who you are, the algortihm was built based on the equation below
 
-https://www.saedsayad.com/images/KNN_similarity.png
+![KNN algorithm equations](https://www.saedsayad.com/images/KNN_similarity.png)
 
 The Pseudocode for Predicting the class value for new data:
 - Calculate distance(X1, X2)
