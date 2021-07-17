@@ -3,7 +3,6 @@ from collections import Counter
 
 def get_eucl_dist(x1, x2):
     #calculate the eucleadian distance between neighbours
-    #
     displacement = np.sqrt(np.sum((x1-x2)**2))
     return displacement
 
@@ -31,9 +30,10 @@ class KNN:
         k_sorted = np.argsort(distances)[:self.max_distance]
 
         #store the nearest y labels in k_nearest_labels
-        k_nearest_labels = [self.y[label] for label in k_sorted]
+        k_nearest_labels = [self.y[index] for index in k_sorted]
 
         #store the most common label in major_label
-        major_label = Counter(k_nearest_labels).most_common(1)
+        nearest_label = Counter(k_nearest_labels)
+        major_label = nearest_label.most_common(1)
 
         return major_label[0][0]
