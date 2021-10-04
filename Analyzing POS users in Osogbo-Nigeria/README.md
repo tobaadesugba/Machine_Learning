@@ -13,5 +13,5 @@ Please make sure to update tests as appropriate.
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
-##Author
+## Author
 [Adesugba Oluwatoba](https://linkedin.com/in/tobaadesugba/)
