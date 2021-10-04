@@ -2,7 +2,7 @@
 
 This analysis was part of a team project to assess the factors influencing the adoption and usage of Point
 of Sale (POS) among Small and Medium-scale Enterprises (SMEs) in Osogbo.
-Reference the TERM PAPER for more details.
+Reference the [term paper](https://github.com/tobaadesugba/Machine_Learning/blob/main/Analyzing%20POS%20users%20in%20Osogbo-Nigeria/a_term_paper_on_the_rate_of_adoption_of_pos_in_the_south-western_region_of_nigeria.pdf) for more details.
 
 
 ## Contributing
