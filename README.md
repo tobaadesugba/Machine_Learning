@@ -1,4 +1,4 @@
-👋 Hi, I’m Toba Adeesugba
+👋 Hi, I’m Toba Adesugba
 
 👀 I’m interested in Machine Learning, Data Science, Data Analysis and generally A.I.
 
