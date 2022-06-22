@@ -5,7 +5,7 @@ from datetime import datetime
 class AgeGenderModel(object):
     # model Initialisation
     def __init__(self, output_size, data, input_dim=(64, 64, 3), dropout_val=0.4):
-        self.data = data # gender or age
+        self.data = data  # gender or age
 
         # CNN Layers
         self.model: object = tf.keras.models.Sequential()
@@ -49,7 +49,7 @@ class AgeGenderModel(object):
                         kernel_size=[5, 5],
                         padding='same',
                         activation='relu',
-                        name='conv1'
+                        name='conv3'
         ))
 
         # Pooling Layer #3
@@ -80,7 +80,7 @@ class AgeGenderModel(object):
         self.model.add(tf.keras.layers.Dense(
                         1024,
                         activation='relu',
-                        name='dense'
+                        name='dense_flatten'
         ))
 
         # Applying Dropout
@@ -131,7 +131,7 @@ class AgeGenderModel(object):
 
         # begin training and store history in 'history'
         # set callback for early stopping of training
-        earlystopping_callback: object = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
+        early_stopping_callback: object = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
         # set callback for tensorboard debugging
         logdir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
@@ -140,7 +140,7 @@ class AgeGenderModel(object):
                                          epochs=epochs,
                                          verbose=0,
                                          validation_data=val_data,
-                                         callbacks=[earlystopping_callback, tensorboard_callback])
+                                         callbacks=[early_stopping_callback, tensorboard_callback])
         return history
 
     def evaluate_model(self, test_data):
