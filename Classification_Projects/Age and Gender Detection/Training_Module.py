@@ -10,77 +10,80 @@ class AgeGenderModel(object):
         # CNN Layers
         self.model: object = tf.keras.models.Sequential()
 
+        # Preprocessing layer
+        self.model.add(tf.keras.layers.Rescaling(1./255))
+
         # Convolutional Layer #1
         self.model.add(tf.keras.layers.Conv2D(
-                        filters=32,
-                        kernel_size=[5, 5],
-                        activation='relu',
-                        padding='same',
-                        input_shape=input_dim,
-                        name='conv1'
+            filters=32,
+            kernel_size=[5, 5],
+            activation='relu',
+            padding='same',
+            input_shape=input_dim,
+            name='conv1'
         ))
 
         # Pooling Layer #1
         self.model.add(tf.keras.layers.MaxPool2D(
-                        pool_size=[2, 2],
-                        strides=2,
-                        name='pool1'
+            pool_size=[2, 2],
+            strides=2,
+            name='pool1'
         ))
 
         # Convolutional Layer #2
         self.model.add(tf.keras.layers.Conv2D(
-                        filters=64,
-                        kernel_size=[5, 5],
-                        padding='same',
-                        activation='relu',
-                        name='conv2'
+            filters=64,
+            kernel_size=[5, 5],
+            padding='same',
+            activation='relu',
+            name='conv2'
         ))
 
         # Pooling Layer #2
         self.model.add(tf.keras.layers.MaxPool2D(
-                        pool_size=[2, 2],
-                        strides=2,
-                        name='pool2'
+            pool_size=[2, 2],
+            strides=2,
+            name='pool2'
         ))
 
         # Convolutional Layer #3
         self.model.add(tf.keras.layers.Conv2D(
-                        filters=128,
-                        kernel_size=[5, 5],
-                        padding='same',
-                        activation='relu',
-                        name='conv3'
+            filters=128,
+            kernel_size=[5, 5],
+            padding='same',
+            activation='relu',
+            name='conv3'
         ))
 
         # Pooling Layer #3
         self.model.add(tf.keras.layers.MaxPool2D(
-                        pool_size=[2, 2],
-                        strides=2,
-                        name='pool3'
+            pool_size=[2, 2],
+            strides=2,
+            name='pool3'
         ))
 
         # Convolutional Layer #4
         self.model.add(tf.keras.layers.Conv2D(
-                        filters=128,
-                        kernel_size=[5, 5],
-                        padding='same',
-                        activation='relu',
-                        name='conv4'
+            filters=128,
+            kernel_size=[5, 5],
+            padding='same',
+            activation='relu',
+            name='conv4'
         ))
 
         # Pooling Layer #4
         self.model.add(tf.keras.layers.MaxPool2D(
-                        pool_size=[2, 2],
-                        strides=2,
-                        name='pool4'
+            pool_size=[2, 2],
+            strides=2,
+            name='pool4'
         ))
 
         # Flattening Pool Layer
         self.model.add(tf.keras.layers.Flatten())
         self.model.add(tf.keras.layers.Dense(
-                        1024,
-                        activation='relu',
-                        name='dense_flatten'
+            1024,
+            activation='relu',
+            name='dense_flatten'
         ))
 
         # Applying Dropout
@@ -95,18 +98,17 @@ class AgeGenderModel(object):
                 name='logits'
             ))
             self.model.summary()
-            return
-
-        # use softmax function for multi class. in age data
-        self.model.add(tf.keras.layers.Dense(
-            output_size,
-            activation='softmax',
-            name='logits'
-        ))
-        self.model.summary()
+        else:
+            # use softmax function for multi class. in age data
+            self.model.add(tf.keras.layers.Dense(
+                output_size,
+                activation='softmax',
+                name='logits'
+            ))
+            self.model.summary()
         return
 
-    def train_model(self, train_data, val_data, epochs=100):
+    def train_model(self, train_data, val_data, epochs=50):
         # check that model has been defined
         if self.model is None:
             print("error: model has not been defined")
@@ -117,9 +119,9 @@ class AgeGenderModel(object):
 
         # use sparse categorical for age data
         if self.data == 'age':
-            loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+            loss = 'sparse_categorical_crossentropy'
         elif self.data == 'gender':
-            loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+            loss = 'binary_crossentropy'
         else:
             print("null or invalid data selected")
             return
@@ -135,12 +137,19 @@ class AgeGenderModel(object):
         # set callback for tensorboard debugging
         logdir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
+        learning_rate_reduction = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_acc',
+                                                                       patience=2,
+                                                                       verbose=1,
+                                                                       factor=0.5,
+                                                                       min_lr=0.00001)
 
         history: object = self.model.fit(train_data,
                                          epochs=epochs,
                                          verbose=0,
                                          validation_data=val_data,
-                                         callbacks=[early_stopping_callback, tensorboard_callback])
+                                         callbacks=[early_stopping_callback,
+                                                    tensorboard_callback,
+                                                    learning_rate_reduction])
         return history
 
     def evaluate_model(self, test_data):
@@ -154,3 +163,9 @@ class AgeGenderModel(object):
 
     def model_predict(self, data):
         return self.model.predict(data)
+
+    def save_model(self):
+        save_dir = "saved_model/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        tf.saved_model.save(self.model, save_dir)
+        print(f"saved in {save_dir}")
+        return
