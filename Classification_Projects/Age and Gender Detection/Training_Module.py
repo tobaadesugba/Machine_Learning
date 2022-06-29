@@ -4,14 +4,14 @@ from datetime import datetime
 
 class AgeGenderModel(object):
     # model Initialisation
-    def __init__(self, output_size, data, input_dim=(64, 64, 3), dropout_val=0.4):
-        self.data = data  # gender or age
+    def __init__(self, output_size, batch_size, data, input_dim=(64, 64, 3), dropout_val=0.4):
+        self.data: str = data  # gender or age
 
         # CNN Layers
-        self.model: object = tf.keras.models.Sequential()
+        self.model = tf.keras.models.Sequential()
 
         # Preprocessing layer
-        self.model.add(tf.keras.layers.Rescaling(1./255))
+        self.model.add(tf.keras.layers.Rescaling(1. / 255))
 
         # Convolutional Layer #1
         self.model.add(tf.keras.layers.Conv2D(
@@ -19,7 +19,6 @@ class AgeGenderModel(object):
             kernel_size=[5, 5],
             activation='relu',
             padding='same',
-            input_shape=input_dim,
             name='conv1'
         ))
 
@@ -97,6 +96,7 @@ class AgeGenderModel(object):
                 activation='sigmoid',
                 name='logits'
             ))
+            self.model.build((batch_size, 64, 64, 3))
             self.model.summary()
         else:
             # use softmax function for multi class. in age data
@@ -105,17 +105,17 @@ class AgeGenderModel(object):
                 activation='softmax',
                 name='logits'
             ))
+            self.model.build((batch_size, 64, 64, 3))
             self.model.summary()
         return
 
     def train_model(self, train_data, val_data, epochs=50):
         # check that model has been defined
         if self.model is None:
-            print("error: model has not been defined")
-            return
+            raise Exception("error: model has not been defined")
 
         # set configuration
-        optimizer = 'adam'
+        optimizer = tf.keras.optimizers.Adam(learning_rate=0.1)
 
         # use sparse categorical for age data
         if self.data == 'age':
@@ -123,8 +123,7 @@ class AgeGenderModel(object):
         elif self.data == 'gender':
             loss = 'binary_crossentropy'
         else:
-            print("null or invalid data selected")
-            return
+            raise ValueError("null or invalid data selected")
 
         # compile the self.model
         self.model.compile(optimizer=optimizer,
@@ -136,16 +135,17 @@ class AgeGenderModel(object):
         early_stopping_callback: object = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5)
         # set callback for tensorboard debugging
         logdir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
-        learning_rate_reduction = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_acc',
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1)
+        # reduce learning rate with callback
+        learning_rate_reduction = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_accuracy',
                                                                        patience=2,
-                                                                       verbose=1,
+                                                                       verbose=0,
                                                                        factor=0.5,
                                                                        min_lr=0.00001)
 
         history: object = self.model.fit(train_data,
                                          epochs=epochs,
-                                         verbose=0,
+                                         verbose=1,
                                          validation_data=val_data,
                                          callbacks=[early_stopping_callback,
                                                     tensorboard_callback,
@@ -158,8 +158,7 @@ class AgeGenderModel(object):
             # return loss, accuracy
             return self.model.evaluate(test_data, verbose=2)
         else:
-            print("error: model has not been defined")
-            return
+            raise ValueError("error: model has not been defined")
 
     def model_predict(self, data):
         return self.model.predict(data)

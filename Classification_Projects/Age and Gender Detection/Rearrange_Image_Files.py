@@ -1,5 +1,5 @@
 # Import helpful libraries
-from shutil import copy
+from shutil import move
 import os
 from pandas import read_csv
 
@@ -37,9 +37,9 @@ def split_dataset(data, data_mode: str):
 
 # for every file loc, copy file to new location
 # set new file location
-def copy_files(data: dict, data_mode: str):
+def move_files(data: dict, data_mode: str):
     dataset_dir = "D:\The Great Big World of Machine Learning" \
-                  "\Projects\datasets\AdienceBenchmarkGenderAndAgeClassification"
+                  "\Projects\datasets\AdienceBenchmarkGenderAndAgeClassification\\new_dataset\\"
 
     for key in data.keys():
         file_list = "\\coarse_tilt_aligned_face." \
@@ -48,15 +48,15 @@ def copy_files(data: dict, data_mode: str):
         file_list = list(file_list)
 
         for count, image in enumerate(file_list):
-            source = dataset_dir + '\\faces\\' + data[key]['user_id'][count] + image
-            target_destination = dataset_dir + '\\new_dataset\\' + data_mode + '\\' + key + image
-            os.makedirs(os.path.dirname(target_destination), exist_ok=True)  # create dest folder if it doesnt exist
-            dest = copy(source, target_destination)
+            source = dataset_dir + data_mode + '\\' + key + '\\' + key + '\\' + image
+            target = dataset_dir + data_mode + '\\' + key + '\\' + data[key][data_mode][count] + '\\' + image
+            os.makedirs(os.path.dirname(target), exist_ok=True)  # create target folder if it doesn't exist
+            dest = move(source, target)
 
             # code to show verbose
             completion_ratio = (count + 1) / file_list.__len__()
             completion_percentage = completion_ratio * 100
-            print(f'loading: {round(completion_percentage, 2)}% - copied to {dest}', end='\r')
+            print(f'loading: {round(completion_percentage, 2)}% - copied {data_mode} {key}', end='\r')
         print()  # clear carriage
 
 
@@ -64,11 +64,11 @@ def main():
     # Read files
     age_data = read_csv("age_data.csv")
     age_dict = split_dataset(age_data, 'age')
-    copy_files(age_dict, 'age')
+    move_files(age_dict, 'age')
 
     gender_data = read_csv("gender_data.csv")
     gender_dict = split_dataset(gender_data, 'gender')
-    copy_files(gender_dict, 'gender')
+    move_files(gender_dict, 'gender')
 
 
 if __name__ == "__main__":
