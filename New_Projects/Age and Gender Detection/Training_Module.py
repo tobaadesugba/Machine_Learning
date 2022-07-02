@@ -115,7 +115,7 @@ class AgeGenderModel(object):
             raise Exception("error: model has not been defined")
 
         # set configuration
-        optimizer = tf.keras.optimizers.Adam(learning_rate=0.1)
+        optimizer = tf.keras.optimizers.SGD(learning_rate=1e-4, momentum=0.8)
 
         # use sparse categorical for age data
         if self.data == 'age':
@@ -137,19 +137,20 @@ class AgeGenderModel(object):
         logdir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1)
         # reduce learning rate with callback
+        '''
         learning_rate_reduction = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_accuracy',
                                                                        patience=2,
                                                                        verbose=0,
-                                                                       factor=0.5,
+                                                                       factor=0.25,
                                                                        min_lr=0.00001)
+        '''
 
         history: object = self.model.fit(train_data,
                                          epochs=epochs,
                                          verbose=1,
                                          validation_data=val_data,
                                          callbacks=[early_stopping_callback,
-                                                    tensorboard_callback,
-                                                    learning_rate_reduction])
+                                                    tensorboard_callback])
         return history
 
     def evaluate_model(self, test_data):
