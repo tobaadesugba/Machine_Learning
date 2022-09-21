@@ -1,7 +1,7 @@
 # import necessary libraries
 import numpy as np
 import tensorflow as tf
-import PIL.Image
+from PIL import Image
 
 
 class ImageProcessing():
@@ -17,7 +17,7 @@ class ImageProcessing():
             tensor (tf.Tensor): tensor object to be converted to PIL image
 
         Returns:
-            PIL.Image.fromarray: output image
+            PIL.Image: output image
         """
 
         # resize image to 255
@@ -32,7 +32,7 @@ class ImageProcessing():
             assert array_tensor.shape[0] == 1  # ensure it has only 1 batch
             array_tensor = array_tensor[0]  # and replace with the batch.
 
-        return PIL.Image.fromarray(array_tensor)  # return image converted from tensor
+        return Image.fromarray(array_tensor)  # return image converted from tensor
 
     def load_image(self, path_to_image, max_dim=256):
         """A function that loads an image and limit its maximum dimension to max_dim to load into the custom model
@@ -46,8 +46,9 @@ class ImageProcessing():
             If images was 3-D, a 3-D float Tensor of shape [new_height, new_width, channels]
         """
         max_dim = max_dim
-        img = tf.io.read_file(path_to_image)
-        img = tf.image.decode_image(img, channels=3)
+        img = Image.open(path_to_image)  # open image file
+        img = tf.keras.utils.img_to_array(img)  # convert image to numpy array
+        img = tf.cast(img, tf.uint8)  # convert image from int to unsigned int 8bits
         img = tf.image.convert_image_dtype(img, tf.float32)
 
         shape = tf.cast(tf.shape(img)[:-1], tf.float32)  # cast image height and width shape as float
@@ -56,7 +57,7 @@ class ImageProcessing():
 
         new_shape = tf.cast(shape * scale, tf.int32)  # scale up the image dimensions with 'scale'
 
-        img = tf.image.resize(img, new_shape, method='area')  # resize image with new image shape
+        img = tf.image.resize(img, new_shape)  # resize image with new image shape
         img = img[tf.newaxis, :]  # expanding dimension by adding a new axis at the beginning of the tensor
 
         return img
@@ -68,7 +69,7 @@ class ImageProcessing():
             img (tf.Tensor): tensor object to be outputted to PIL image
 
         Returns:
-            PIL.Image.fromarray: output image
+            PIL.Image: output image
         """
         img = tf.image.convert_image_dtype(image, tf.float32)
         shape = tf.cast(tf.shape(img)[:-1], tf.float32)  # cast image height and width shape as float

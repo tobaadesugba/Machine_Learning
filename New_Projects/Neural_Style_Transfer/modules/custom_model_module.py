@@ -45,7 +45,7 @@ class StyleContentModel(tf.keras.models.Model):
         Returns:
             tf.keras.Model: model with intermediate output values
         """
-        model_dir = "models//vgg_model_no_head"
+        model_dir = "models/vgg_model_no_head"
         vgg = tf.keras.models.load_model(model_dir)  # load no-head model
         vgg.trainable = False  # freeze output layers of model
 

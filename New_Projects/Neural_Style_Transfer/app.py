@@ -2,31 +2,43 @@ import streamlit as st
 from modules.style_transfer_module import TransferStyle
 from modules.image_processing_module import ImageProcessing
 
+
+# from io import BytesIO
+# import urllib
+
 def get_test_image():
     test_options = ["Image 1", "Image 2", "Image 3"]
     test_selection = st.radio(label="choose a test image", options=test_options)
 
     if test_selection == "Image 1":
-        image = 'data//content1.jpg'
+        content_image = 'data//content1.jpg'
+        # url = IMAGE URL
+        # file_obj = BytesIO(return urllib.request.urlopen(url).read())
     elif test_selection == "Image 2":
-        image = 'data//content2.jpg'
+        content_image = 'data//content2.jpg'
     elif test_selection == "Image 3":
-        image = 'data//content3.jpg'
-    return image
+        content_image = 'data//content3.jpg'
+    else:
+        content_image = None
+    return content_image
+
 
 def get_style_image():
     test_options = ["Image 1", "Image 2", "Image 3"]
     test_selection = st.radio(label="choose a style image", options=test_options)
 
     if test_selection == "Image 1":
-        image = 'data//style1.jpg'
+        style_image = 'data//style1.jpg'
     elif test_selection == "Image 2":
-        image = 'data//style2.jpg'
+        style_image = 'data//style2.jpg'
     elif test_selection == "Image 3":
-        image = 'data//style3.jpg'
-    return image
+        style_image = 'data//style3.jpg'
+    else:
+        style_image = None
+    return style_image
 
-# add side bar elements
+
+# add sidebar elements
 with st.sidebar:
     options = [None, "Upload Selection", "Webcam Selection", "Test Selection"]
     file_selection = st.radio("Pick your image input mode", options=options)
@@ -44,7 +56,7 @@ with st.sidebar:
 
     # display input image if available
     if image:
-        if (file_selection != "Webcam Selection"):
+        if file_selection != "Webcam Selection":
             st.image(image=image, caption="Input Image")
 
 st.header("Output Viewer")
@@ -80,7 +92,7 @@ if st.button('Transfer Image Style'):
             st.image(image)
         with col2:
             st.subheader("Style Image")
-            st.image((style_image))
+            st.image(style_image)
         with col3:
             st.subheader("Output Image")
             st.image(ImageProcessing().load_output_image(styled_image))
