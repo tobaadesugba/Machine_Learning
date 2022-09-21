@@ -47,7 +47,7 @@ class StyleContentModel(tf.keras.models.Model):
             tf.keras.Model: model with intermediate output values
         """
         path = getcwd()  # get the current working directory
-        model_dir = path + "\\models\\vgg_model_no_head"
+        model_dir = path + "/models/vgg_model_no_head"
         vgg = tf.keras.models.load_model(model_dir)  # load no-head model
         vgg.trainable = False  # freeze output layers of model
 

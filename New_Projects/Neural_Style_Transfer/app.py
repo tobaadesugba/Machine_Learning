@@ -15,15 +15,15 @@ def get_test_image():
     test_selection = st.radio(label="choose a test image", options=test_options)
 
     if test_selection == "Image 1":
-        content_image = path+'\\data\\content1.jpg'
+        content_image = path+'/data/content1.jpg'
         content_image = Image.open(content_image)
         # url = IMAGE URL
         # file_obj = BytesIO(return urllib.request.urlopen(url).read())
     elif test_selection == "Image 2":
-        content_image = path+'\\data\\content2.jpg'
+        content_image = path+'/data/content2.jpg'
         content_image = Image.open(content_image)
     elif test_selection == "Image 3":
-        content_image = path+'\\data\\content3.jpg'
+        content_image = path+'/data/content3.jpg'
         content_image = Image.open(content_image)
     else:
         content_image = None
@@ -35,13 +35,13 @@ def get_style_image():
     test_selection = st.radio(label="choose a style image", options=test_options)
 
     if test_selection == "Image 1":
-        style_image = path+'\\data\\style1.jpg'
+        style_image = path+'/data/style1.jpg'
         style_image = Image.open(style_image)
     elif test_selection == "Image 2":
-        style_image = path+'\\data\\style2.jpg'
+        style_image = path+'/data/style2.jpg'
         style_image = Image.open(style_image)
     elif test_selection == "Image 3":
-        style_image = path+'\\data\\style3.jpg'
+        style_image = path+'/data/style3.jpg'
         style_image = Image.open(style_image)
     else:
         style_image = None
