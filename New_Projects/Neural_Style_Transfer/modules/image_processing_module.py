@@ -46,8 +46,8 @@ class ImageProcessing():
             If images was 3-D, a 3-D float Tensor of shape [new_height, new_width, channels]
         """
         max_dim = max_dim
-        img = Image.open(path_to_image)  # open image file
-        img = tf.keras.utils.img_to_array(img)  # convert image to numpy array
+        # img = Image.open(path_to_image)  # open image file, not necessary since it's in app.py
+        img = tf.keras.utils.img_to_array(path_to_image)  # convert image to numpy array
         img = tf.cast(img, tf.uint8)  # convert image from int to unsigned int 8bits
         img = tf.image.convert_image_dtype(img, tf.float32)
 

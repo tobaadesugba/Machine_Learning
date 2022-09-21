@@ -1,5 +1,6 @@
 # import necessary files
 import tensorflow as tf
+from os import getcwd
 
 
 class StyleContentModel(tf.keras.models.Model):
@@ -34,7 +35,7 @@ class StyleContentModel(tf.keras.models.Model):
         result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
         input_shape = tf.shape(input_tensor)
         num_locations = tf.cast(input_shape[1] * input_shape[2], tf.float32)
-        return result / (num_locations)
+        return result / num_locations
 
     def vgg_intermediate_layers(self, layer_names):
         """Creates a model that returns the list of intermediate layer output values
@@ -45,7 +46,8 @@ class StyleContentModel(tf.keras.models.Model):
         Returns:
             tf.keras.Model: model with intermediate output values
         """
-        model_dir = "models/vgg_model_no_head"
+        path = getcwd()  # get the current working directory
+        model_dir = path + "\\models\\vgg_model_no_head"
         vgg = tf.keras.models.load_model(model_dir)  # load no-head model
         vgg.trainable = False  # freeze output layers of model
 
