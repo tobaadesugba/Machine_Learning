@@ -57,10 +57,12 @@ with st.sidebar:
         image = get_test_image()
     elif file_selection == "Upload Selection":
         image = st.file_uploader(label="Please choose your image file", type=['png', 'jpg', 'jpeg'])
-        image = Image.open(image)
+        if image:
+            image = Image.open(image)
     elif file_selection == "Webcam Selection":
         image = st.camera_input(label="smile for the camera")
-        image = Image.open(image)
+        if image:
+            image = Image.open(image)
     else:
         image = None
         st.warning("Please pick an option")
@@ -78,7 +80,8 @@ styles = [None, "Upload Style", "Test Styles"]
 style_selection = st.radio("Pick your style input mode", options=styles)
 if style_selection == "Upload Style":
     style_image = st.file_uploader(label="Upload the style to use", type=['png', 'jpg', 'jpeg'])
-    style_image = Image.open(style_image)
+    if style_image:
+        style_image = Image.open(style_image)
 elif style_selection == "Test Styles":
     style_image = get_style_image()
 else:
