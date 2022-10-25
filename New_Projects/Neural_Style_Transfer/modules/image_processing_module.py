@@ -20,7 +20,7 @@ class ImageProcessing():
             PIL.Image: output image
         """
 
-        # resize image to 255
+        # limit image pixel values to 255
         tensor = tensor * 255
 
         # convert tensor to numpy array for easy manipulation
@@ -71,7 +71,9 @@ class ImageProcessing():
         Returns:
             PIL.Image: output image
         """
-        img = tf.image.convert_image_dtype(image, tf.float32)
+        img = tf.keras.utils.img_to_array(image)  # convert image to numpy array
+        img = tf.cast(img, tf.uint8)  # convert image from int to unsigned int 8bits
+        img = tf.image.convert_image_dtype(img, tf.float32)
         shape = tf.cast(tf.shape(img)[:-1], tf.float32)  # cast image height and width shape as float
         long_dim = max(shape)  # store max dim of shape (one of height or width)
         scale = 256 / long_dim  # get stated scale of maximum dimension to the dimension of the image

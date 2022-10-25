@@ -14,6 +14,8 @@ class StyleContentModel(tf.keras.models.Model):
             self.num_style_layers (int) total number of intermediate style layers
         """
         super(StyleContentModel, self).__init__()
+        model_dir = "models//vgg_model.h5"
+        self.vgg_model = tf.keras.models.load_model(model_dir, compile=False)  # load no-head model
         self.vgg = self.vgg_intermediate_layers(style_layers + content_layers)
         self.style_layers = style_layers
         self.content_layers = content_layers
@@ -46,14 +48,11 @@ class StyleContentModel(tf.keras.models.Model):
         Returns:
             tf.keras.Model: model with intermediate output values
         """
-        # path = getcwd()  # get the current working directory
-        model_dir = "vgg_model.h5"
-        vgg = tf.keras.models.load_model(model_dir)  # load no-head model
-        vgg.trainable = False  # freeze output layers of model
+        self.vgg_model.trainable = False  # freeze output layers of model
 
-        outputs = [vgg.get_layer(name).output for name in layer_names]  # get output_name of each layer
+        outputs = [self.vgg_model.get_layer(name).output for name in layer_names]  # get output_name of each layer
 
-        model = tf.keras.Model([vgg.input], outputs)  # create functional model with input and output arguments
+        model = tf.keras.Model([self.vgg_model.input], outputs)  # create functional model with input and output arguments
         return model
 
     def __call__(self, inputs):

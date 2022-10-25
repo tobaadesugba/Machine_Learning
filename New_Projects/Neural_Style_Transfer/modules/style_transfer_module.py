@@ -12,8 +12,9 @@ os.environ['TFHUB_MODEL_LOAD_FORMAT'] = 'COMPRESSED'
 
 class TransferStyle():
     def __init__(self, content_path, style_path, intensity: int = 70, quality: int = 256):
-        self.content_image = ImageProcessing().load_image(path_to_image=content_path, max_dim=quality)
-        self.style_image = ImageProcessing().load_image(path_to_image=style_path, max_dim=quality)
+        self.ImageProcessing = ImageProcessing()
+        self.content_image = self.ImageProcessing.load_image(path_to_image=content_path, max_dim=quality)
+        self.style_image = self.ImageProcessing.load_image(path_to_image=style_path, max_dim=quality)
         self.steps_per_epoch = intensity
         # vgg model layer names for content and style
         self.content_layers = ['block5_conv2']
@@ -23,7 +24,6 @@ class TransferStyle():
                              'block4_conv1',
                              'block5_conv1']
         self.extractor = StyleContentModel(self.style_layers, self.content_layers)  # define extractor model
-
     def style_content_loss(self, model_outputs):
         """Uses mean squared error to calculate the loss for image's output relative to
             each target and taking the weighted sum of the losses
@@ -80,7 +80,7 @@ class TransferStyle():
 
         grad = tape.gradient(loss, image)  # apply tf.GradientTape
         self.optimizer.apply_gradients([(grad, image)])  # apply optimizer
-        image.assign(ImageProcessing().clip_0_to_1(image))  # apply effect on image
+        image.assign(self.ImageProcessing.clip_0_to_1(image))  # apply effect on image
 
     def __call__(self):
         # defining a tf.variable to hold the content image
@@ -93,7 +93,7 @@ class TransferStyle():
         import time
         start = time.time()
 
-        epochs = 10
+        epochs = 3
 
         step = 0
         for epoch in range(epochs):
@@ -106,4 +106,4 @@ class TransferStyle():
         st.info(f"Training steps: {step} steps")
         st.info("Total time spent: {:.1f} seconds".format(end - start))
 
-        return ImageProcessing().tensor_to_image(image)
+        return self.ImageProcessing.tensor_to_image(image)

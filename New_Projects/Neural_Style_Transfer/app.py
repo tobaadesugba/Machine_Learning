@@ -4,7 +4,6 @@ from modules.image_processing_module import ImageProcessing
 from os import getcwd
 from PIL import Image
 
-
 # from io import BytesIO
 # import urllib
 path = getcwd()
@@ -15,15 +14,15 @@ def get_test_image():
     test_selection = st.radio(label="choose a test image", options=test_options)
 
     if test_selection == "Image 1":
-        content_image = path+'/data/content1.jpg'
+        content_image = path + '/data/content1.jpg'
         content_image = Image.open(content_image)
         # url = IMAGE URL
         # file_obj = BytesIO(return urllib.request.urlopen(url).read())
     elif test_selection == "Image 2":
-        content_image = path+'/data/content2.jpg'
+        content_image = path + '/data/content2.jpg'
         content_image = Image.open(content_image)
     elif test_selection == "Image 3":
-        content_image = path+'/data/content3.jpg'
+        content_image = path + '/data/content3.jpg'
         content_image = Image.open(content_image)
     else:
         content_image = None
@@ -35,13 +34,13 @@ def get_style_image():
     test_selection = st.radio(label="choose a style image", options=test_options)
 
     if test_selection == "Image 1":
-        style_image = path+'/data/style1.jpg'
+        style_image = path + '/data/style1.jpg'
         style_image = Image.open(style_image)
     elif test_selection == "Image 2":
-        style_image = path+'/data/style2.jpg'
+        style_image = path + '/data/style2.jpg'
         style_image = Image.open(style_image)
     elif test_selection == "Image 3":
-        style_image = path+'/data/style3.jpg'
+        style_image = path + '/data/style3.jpg'
         style_image = Image.open(style_image)
     else:
         style_image = None
@@ -69,9 +68,8 @@ with st.sidebar:
         st.stop()
 
     # display input image if available
-    if image:
-        if file_selection != "Webcam Selection":
-            st.image(image=image, caption="Input Image")
+    if image and file_selection != "Webcam Selection":
+        st.image(image=image, caption="Input Image")
 
 st.header("Output Viewer")
 st.write("Don't forget to set your input image in the sidebar 👈")
@@ -90,15 +88,17 @@ else:
     st.stop()
 intensity = st.slider('Set the intensity of the style', min_value=1, max_value=50, value=50)
 quality = st.slider('Set the image quality of the style', min_value=128, max_value=256, step=16)
-
+# load style transfer function
+if style_image:
+    style_transfer = TransferStyle(content_path=image,
+                                 style_path=style_image,
+                                 intensity=intensity,
+                                 quality=quality)
 # button to start training
 if st.button('Transfer Image Style'):
     if style_image:
         with st.spinner("Getting Image Style. Please wait..."):
-            styled_image = TransferStyle(content_path=image,
-                                         style_path=style_image,
-                                         intensity=intensity,
-                                         quality=quality)()
+            styled_image = style_transfer()
         st.success("Image Style Successfully Transferred")
 
         # set columns for displaying output
