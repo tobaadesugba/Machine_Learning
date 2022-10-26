@@ -93,7 +93,7 @@ class TransferStyle():
         import time
         start = time.time()
 
-        epochs = 3
+        epochs = 5
 
         step = 0
         for epoch in range(epochs):
