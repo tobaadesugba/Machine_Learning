@@ -29,9 +29,8 @@ This system can serve as a phot-editing application, that helps you to create a 
 2. To get started on replicating the model, checkout the next section
 
 ## Featured Notebooks/Links
-* [Notebook/Markdown/Slide Deck Title](link)
-* [Notebook](New_Projects/Neural_Style_Transfer/notebooks/Model_Building.ipynb)
-* [Blog Post](link)
+* [Model Building Notebook](New_Projects/Neural_Style_Transfer/notebooks/Model_Building.ipynb)
+* [Dataset](New_Projects/Neural_Style_Transfer/notebooks)
 
 ## Contact
 * Feel free to contact me on [LinkedIn](https://www.linkedin.com/in/tobaadesugba/) with any questions or if you are interested in contributing!
